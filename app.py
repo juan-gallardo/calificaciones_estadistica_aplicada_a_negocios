@@ -94,8 +94,13 @@ if df.empty:
 
 # --- 2. Interfaz de búsqueda ---
 search_term = st.text_input(
+<<<<<<< HEAD
     "Ingresa tu **número de identificación(ID)** o **correo electrónico** para consultar tu calificación:",
     placeholder="Ej: 123456 o perez@gmail",
+=======
+    "Ingresa tu **número de ID** para consultar tu calificación:",
+    placeholder="Ej: 123456",
+>>>>>>> 9a84458 (Deje solo el campo número de id para hacer el filtrado de la nota.)
 )
 
 # Elimina espacios en blanco al inicio y al final del término de búsqueda.
@@ -105,8 +110,12 @@ search_term = search_term.strip()
 if search_term:
     # La búsqueda por id y email es exacta y no distingue mayúsculas/minúsculas.
     search_results = df[
+<<<<<<< HEAD
         (df["Número de ID"] == search_term) |
         (df["Dirección de correo"].str.lower() == search_term.lower())
+=======
+        df["Número de ID"].str.contains(search_term, case=False, na=False)
+>>>>>>> 9a84458 (Deje solo el campo número de id para hacer el filtrado de la nota.)
     ]
 
     if not search_results.empty:
@@ -141,9 +150,15 @@ if search_term:
         
 
     else:
+<<<<<<< HEAD
         st.warning("No se encontraron resultados con el ID o email ingresado. Por favor, inténtalo de nuevo.")
 else:
     st.info("Ingresa tu número de ID o email en el campo de arriba para ver tu calificación.")
+=======
+        st.warning("No se encontraron resultados con el ID ingresado. Por favor, inténtalo de nuevo.")
+else:
+    st.info("Ingresa tu número de ID en el campo de arriba para ver tu calificación.")
+>>>>>>> 9a84458 (Deje solo el campo número de id para hacer el filtrado de la nota.)
 
 st.markdown("---")
 st.image(logo_path, width=250)
