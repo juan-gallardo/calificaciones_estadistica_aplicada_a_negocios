@@ -63,7 +63,7 @@ st.markdown("---")
 excel_file_path = "Estadística aplicada a los negocios - Calificaciones finales - 1er cuatrimestre 2025.xlsx"
 
 # --- Carga de datos desde el archivo Excel ---
-@st.cache_data(ttl="5m") # Cachea los datos por 5 minutos
+# @st.cache_data(ttl="5m") # Cachea los datos por 5 minutos
 def load_data(file_path):
     """Carga los datos de la hoja de cálculo en un DataFrame."""
     # Verificamos si el archivo existe
@@ -110,6 +110,7 @@ if search_term:
     ]
 
     if not search_results.empty:
+
         st.subheader("Tu calificación:")
         
         # Muestra solo las columnas que especificaste
@@ -122,6 +123,22 @@ if search_term:
         result_to_show['% Actividades realizadas'] = result_to_show['% Actividades realizadas'].apply(lambda x: f'{x:.1%}')
         
         st.dataframe(result_to_show, use_container_width=True)
+
+        ###  --- Mensajes personalizados ---
+        # Accedemos a la primera fila de los resultados
+        estudiante_resultado = search_results.iloc[0]
+
+        # Mensajes condicionales
+        condicion = estudiante_resultado["Condición del estudiante"]
+        nombre = estudiante_resultado["Nombre"]
+        
+        # Verificamos si la condición es "Promociona" o "Final"
+        if condicion == "Promociona":
+            st.balloons() # ¡Globos de celebración!
+            st.success(f"¡Felicitaciones, {nombre}! ¡Has promocionado la materia! 🎉")
+        elif condicion == "Final":
+            st.info(f"¡Hola, {nombre}! Te esperamos en la instancia de examen final para darlo todo 💪. Te animamos a dar un último esfuerzo para aprobar la materia. ¡No dudes en hacernos todas las consultas que necesites 🤗!")
+        
 
     else:
         st.warning("No se encontraron resultados con el ID o email ingresado. Por favor, inténtalo de nuevo.")
