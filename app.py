@@ -77,7 +77,7 @@ def load_data(file_path):
         
         # Limpia los datos y convierte las columnas clave a string
         df["Número de ID"] = df["Número de ID"].astype(str).str.strip()
-        df["Apellido(s)"] = df["Apellido(s)"].astype(str).str.strip()
+        df["Dirección de correo"] = df["Dirección de correo"].astype(str).str.strip()
         
         return df
     except Exception as e:
@@ -94,16 +94,19 @@ if df.empty:
 
 # --- 2. Interfaz de búsqueda ---
 search_term = st.text_input(
-    "Ingresa tu número de **ID** o **apellido** para consultar tu calificación:",
-    placeholder="Ej: 123456 o Perez",
+    "Ingresa tu **número de ID** o **email** para consultar tu calificación:",
+    placeholder="Ej: 123456 o perez@gmail",
 )
+
+# Elimina espacios en blanco al inicio y al final del término de búsqueda.
+search_term = search_term.strip()
 
 # --- 3. Lógica de filtrado y visualización ---
 if search_term:
     # Filtra el DataFrame por el término de búsqueda, sin distinguir mayúsculas/minúsculas
     search_results = df[
         df["Número de ID"].str.contains(search_term, case=False, na=False) |
-        df["Apellido(s)"].str.contains(search_term, case=False, na=False)
+        df["Dirección de correo"].str.contains(search_term, case=False, na=False)
     ]
 
     if not search_results.empty:
@@ -111,7 +114,7 @@ if search_term:
         
         # Muestra solo las columnas que especificaste
         result_to_show = search_results[[
-            "Nombre", "Apellido(s)", "Número de ID", 
+            "Nombre", "Número de ID", "Dirección de correo",
             "% Actividades realizadas", "Nota", "Condición del estudiante"
         ]].copy() # Usamos .copy() para evitar un aviso de Pandas
         # Aplica el formato de porcentaje al DataFrame antes de mostrarlo en la tabla
@@ -121,9 +124,9 @@ if search_term:
         st.dataframe(result_to_show, use_container_width=True)
 
     else:
-        st.warning("No se encontraron resultados con el ID o apellido ingresado. Por favor, inténtalo de nuevo.")
+        st.warning("No se encontraron resultados con el ID o email ingresado. Por favor, inténtalo de nuevo.")
 else:
-    st.info("Ingresa tu número de ID o apellido en el campo de arriba para ver tu calificación.")
+    st.info("Ingresa tu número de ID o email en el campo de arriba para ver tu calificación.")
 
 st.markdown("---")
 st.image(logo_path, width=250)
