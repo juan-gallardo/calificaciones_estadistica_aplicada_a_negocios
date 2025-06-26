@@ -103,10 +103,10 @@ search_term = search_term.strip()
 
 # --- 3. Lógica de filtrado y visualización ---
 if search_term:
-    # Filtra el DataFrame por el término de búsqueda, sin distinguir mayúsculas/minúsculas
+    # La búsqueda por id y email es exacta y no distingue mayúsculas/minúsculas.
     search_results = df[
-        df["Número de ID"].str.contains(search_term, case=False, na=False) |
-        df["Dirección de correo"].str.contains(search_term, case=False, na=False)
+        (df["Número de ID"] == search_term) |
+        (df["Dirección de correo"].str.lower() == search_term.lower())
     ]
 
     if not search_results.empty:
