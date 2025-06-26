@@ -94,7 +94,7 @@ if df.empty:
 
 # --- 2. Interfaz de búsqueda ---
 search_term = st.text_input(
-    "Ingresa tu **número de ID** o **email** para consultar tu calificación:",
+    "Ingresa tu **número de identificación(ID)** o **correo electrónico** para consultar tu calificación:",
     placeholder="Ej: 123456 o perez@gmail",
 )
 
