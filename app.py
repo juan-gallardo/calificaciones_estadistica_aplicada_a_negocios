@@ -159,9 +159,9 @@ if search_term:
         
 
     else:
-        st.warning("No se encontraron resultados con el ID ingresado. Por favor, inténtalo de nuevo.")
+        st.warning("No se encontraron resultados con el ID o email ingresado. Por favor, inténtalo de nuevo.")
 else:
-    st.info("Ingresa tu número de ID en el campo de arriba para ver tu calificación.")
+    st.info("Ingresa tu número de ID o email en el campo de arriba para ver tu calificación.")
 
 st.markdown("---")
 st.image(logo_path, width=250)
