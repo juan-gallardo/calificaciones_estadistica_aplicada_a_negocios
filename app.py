@@ -112,8 +112,8 @@ if df.empty:
 
 # --- 2. Interfaz de búsqueda ---
 search_term = st.text_input(
-    "Ingresa tu **número de ID** para consultar tu calificación:",
-    placeholder="Ej: 123456",
+    "Ingresa tu **número de ID** o **correo electrónico** para consultar tu calificación:",
+    placeholder="Ej: 123456 o perez@gmail",
 )
 
 # Elimina espacios en blanco al inicio y al final del término de búsqueda.
@@ -123,7 +123,8 @@ search_term = search_term.strip()
 if search_term:
     # La búsqueda por id y email es exacta y no distingue mayúsculas/minúsculas.
     search_results = df[
-        df["Número de ID"].str.contains(search_term, case=False, na=False)
+        (df["Número de ID"] == search_term) |
+        (df["Dirección de correo"].str.lower() == search_term.lower())
     ]
 
     if not search_results.empty:
