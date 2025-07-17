@@ -1,6 +1,5 @@
 # Ignorar la carpeta de secretos de Streamlit (si la vuelves a usar)
 .streamlit/
-.env
 
 # Ignore all Excel files
 *.xlsx

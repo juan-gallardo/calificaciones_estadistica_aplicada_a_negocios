@@ -78,22 +78,24 @@ except Exception as e:
     st.error(f"Error al inicializar el cliente Supabase. Verifica tus variables de entorno. Error: {e}")
     st.stop() # Detenemos la ejecución si no podemos conectar a Supabase
 
-# --- Carga de datos desde el archivo Excel ---
+# --- Carga de datos desde Supabase ---
 @st.cache_data(ttl="5m") # Cachea los datos por 5 minutos
-def load_data(file_path):
-    """Carga los datos de la hoja de cálculo en un DataFrame."""
-    # Verificamos si el archivo existe
-    if not os.path.exists(file_path):
-        st.error(f"Error: No se encontró el archivo '{file_path}'. Asegúrate de que esté en la misma carpeta que el script.")
-        st.stop()
-        
+def load_data_from_supabase():
+    """
+    Carga los datos de la tabla 'calificaciones_estadistica_utn' de Supabase
+    en un DataFrame de pandas.
+    """
     try:
-        # Lee el archivo Excel. Asegúrate de que el nombre de la hoja sea correcto.
-        df = pd.read_excel(file_path, sheet_name="Calificaciones - En Limpio")
+        # Usamos el cliente Supabase globalmente
+        response = supabase.table('calificaciones_estadistica_utn').select('*').execute()
+        
+        # Supabase client retorna los datos en .data
+        df = pd.DataFrame(response.data)
         
         # Limpia los datos y convierte las columnas clave a string
-        df["Número de ID"] = df["Número de ID"].astype(str).str.strip()
-        df["Apellido(s)"] = df["Apellido(s)"].astype(str).str.strip()
+        if not df.empty:
+            df["Número de ID"] = df["Número de ID"].astype(str).str.strip()
+            df["Dirección de correo"] = df["Dirección de correo"].astype(str).str.strip()
         
         return df
     except Exception as e:
