@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import os # Importamos la librería para trabajar con rutas de archivos
+from supabase import create_client, Client
+from dotenv import load_dotenv
 
 # --- Configuración de la página ---
 st.set_page_config(
@@ -57,13 +59,27 @@ st.image(portada_path)
 st.markdown("<p class='big-font'>Consulta de Calificaciones - Estadística Aplicada a los Negocios</p>", unsafe_allow_html=True)
 st.markdown("---")
 
-# --- 1. Define la ruta de tu archivo Excel ---
-# ¡IMPORTANTE! Reemplaza "calificaciones.xlsx" con el nombre de tu archivo.
-# Asegúrate de que el archivo esté en la misma carpeta que tu script.
-excel_file_path = "Estadística aplicada a los negocios - Calificaciones finales - 1er cuatrimestre 2025.xlsx"
+# --- Cargar variables de entorno ---
+load_dotenv()
+
+# --- Obtener credenciales de Supabase ---
+# Asegúrate de que estas variables estén definidas en tu archivo .env
+# SUPABASE_URL="https://your_project_ref.supabase.co"
+# SUPABASE_KEY="your_anon_public_key"
+url: str = os.getenv("SUPABASE_URL")
+key: str = os.getenv("SUPABASE_KEY")
+
+# --- Inicializar cliente Supabase fuera de la función cacheada ---
+# El cliente Supabase no es "cacheable" por Streamlit de forma directa.
+# Es mejor crearlo una vez y pasarlo o usarlo globalmente.
+try:
+    supabase: Client = create_client(url, key)
+except Exception as e:
+    st.error(f"Error al inicializar el cliente Supabase. Verifica tus variables de entorno. Error: {e}")
+    st.stop() # Detenemos la ejecución si no podemos conectar a Supabase
 
 # --- Carga de datos desde el archivo Excel ---
-# @st.cache_data(ttl="5m") # Cachea los datos por 5 minutos
+@st.cache_data(ttl="5m") # Cachea los datos por 5 minutos
 def load_data(file_path):
     """Carga los datos de la hoja de cálculo en un DataFrame."""
     # Verificamos si el archivo existe
@@ -77,30 +93,25 @@ def load_data(file_path):
         
         # Limpia los datos y convierte las columnas clave a string
         df["Número de ID"] = df["Número de ID"].astype(str).str.strip()
-        df["Dirección de correo"] = df["Dirección de correo"].astype(str).str.strip()
+        df["Apellido(s)"] = df["Apellido(s)"].astype(str).str.strip()
         
         return df
     except Exception as e:
-        st.error(f"Hubo un error al cargar los datos desde el archivo. Revisa si la hoja se llama 'Calificaciones - En Limpio' y si los encabezados de las columnas son correctos. Error: {e}")
+        st.error(f"Hubo un error al cargar los datos desde Supabase. Revisa la tabla y las columnas. Error: {e}")
         return pd.DataFrame() # Devuelve un DataFrame vacío en caso de error
 
-# Carga los datos en un DataFrame
-df = load_data(excel_file_path)
+# --- Carga los datos en un DataFrame desde Supabase ---
+df = load_data_from_supabase()
 
 if df.empty:
     # Este mensaje solo se muestra si load_data devuelve un DataFrame vacío por un error de lectura
-    st.info("No se pudieron cargar los datos desde el archivo. Por favor, verifica el contenido y vuelve a intentarlo.")
+    st.info("No se pudieron cargar los datos desde Supabase. Por favor, verifica tu conexión y la tabla.")
     st.stop()
 
 # --- 2. Interfaz de búsqueda ---
 search_term = st.text_input(
-<<<<<<< HEAD
-    "Ingresa tu **número de identificación(ID)** o **correo electrónico** para consultar tu calificación:",
-    placeholder="Ej: 123456 o perez@gmail",
-=======
     "Ingresa tu **número de ID** para consultar tu calificación:",
     placeholder="Ej: 123456",
->>>>>>> 9a84458 (Deje solo el campo número de id para hacer el filtrado de la nota.)
 )
 
 # Elimina espacios en blanco al inicio y al final del término de búsqueda.
@@ -110,12 +121,7 @@ search_term = search_term.strip()
 if search_term:
     # La búsqueda por id y email es exacta y no distingue mayúsculas/minúsculas.
     search_results = df[
-<<<<<<< HEAD
-        (df["Número de ID"] == search_term) |
-        (df["Dirección de correo"].str.lower() == search_term.lower())
-=======
         df["Número de ID"].str.contains(search_term, case=False, na=False)
->>>>>>> 9a84458 (Deje solo el campo número de id para hacer el filtrado de la nota.)
     ]
 
     if not search_results.empty:
@@ -150,15 +156,9 @@ if search_term:
         
 
     else:
-<<<<<<< HEAD
-        st.warning("No se encontraron resultados con el ID o email ingresado. Por favor, inténtalo de nuevo.")
-else:
-    st.info("Ingresa tu número de ID o email en el campo de arriba para ver tu calificación.")
-=======
         st.warning("No se encontraron resultados con el ID ingresado. Por favor, inténtalo de nuevo.")
 else:
     st.info("Ingresa tu número de ID en el campo de arriba para ver tu calificación.")
->>>>>>> 9a84458 (Deje solo el campo número de id para hacer el filtrado de la nota.)
 
 st.markdown("---")
 st.image(logo_path, width=250)

@@ -1,9 +1,12 @@
 # Ignorar la carpeta de secretos de Streamlit (si la vuelves a usar)
 .streamlit/
 .env
-app2.py
-calificaciones_estadistica_aplicada_a_negocios.ipynb
-Estadística aplicada a los negocios - Calificaciones finales - 1er cuatrimestre 2025.csv
-Estadística aplicada a los negocios - Calificaciones finales - 1er cuatrimestre 2025.xlsx
-BackUp de Estadística aplicada a los negocios - Calificaciones finales - 1er cuatrimestre 2025.xlsx
-calificaciones_estadistica_aplicada_a_negocios.ipynb
+
+# Ignore all Excel files
+*.xlsx
+
+# Ignore all CSV files
+*.csv
+
+# Ignore all Jupyter Notebook files
+*.ipynb
